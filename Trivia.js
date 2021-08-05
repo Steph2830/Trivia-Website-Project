@@ -1,5 +1,112 @@
-function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
-	var myQuestions = [
+(function(){
+	
+	function buildQuiz(){
+	  
+	  const output = [];
+  
+	  // for each question...
+	  myQuestions.forEach(
+		(currentQuestion, questionNumber) => {
+  
+		  
+		  const answers = [];
+  
+		  
+		  for(letter in currentQuestion.answers){
+  
+			
+			answers.push(
+			  `<label>
+				<input type="radio" name="question${questionNumber}" value="${letter}">
+				${letter} :
+				${currentQuestion.answers[letter]}
+			  </label>`
+			);
+		  }
+  
+		  // add this question and its answers to the output
+		  output.push(
+			`<div class="slide">
+			  <div class="question"> ${currentQuestion.question} </div>
+			  <div class="answers"> ${answers.join("")} </div>
+			</div>`
+		  );
+		}
+	  );
+  
+	  
+	  quizContainer.innerHTML = output.join('');
+	}
+  
+	function showResults(){
+  
+	  // gather answer containers from our quiz
+	  const answerContainers = quizContainer.querySelectorAll('.answers');
+  
+	  // keep track of user's answers
+	  let numCorrect = 0;
+  
+	  // for each question...
+	  myQuestions.forEach( (currentQuestion, questionNumber) => {
+  
+		// find selected answer
+		const answerContainer = answerContainers[questionNumber];
+		const selector = `input[name=question${questionNumber}]:checked`;
+		const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+  
+		// if answer is correct
+		if(userAnswer === currentQuestion.correctAnswer){
+		  // add to the number of correct answers
+		  numCorrect++;
+  
+		  // color the answers green
+		  answerContainers[questionNumber].style.color = 'lightgreen';
+		}
+		// if answer is wrong or blank
+		else{
+		  // color the answers red
+		  answerContainers[questionNumber].style.color = 'red';
+		}
+	  });
+  
+	  // show number of correct answers out of total
+	  resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
+	}
+  
+	function showSlide(n) {
+	  slides[currentSlide].classList.remove('active-slide');
+	  slides[n].classList.add('active-slide');
+	  currentSlide = n;
+	  if(currentSlide === 0){
+		previousButton.style.display = 'none';
+	  }
+	  else{
+		previousButton.style.display = 'inline-block';
+	  }
+	  if(currentSlide === slides.length-1){
+		nextButton.style.display = 'none';
+		submitButton.style.display = 'inline-block';
+	  }
+	  else{
+		nextButton.style.display = 'inline-block';
+		submitButton.style.display = 'none';
+	  }
+	}
+  
+	function showNextSlide() {
+	  showSlide(currentSlide + 1);
+	}
+  
+	function showPreviousSlide() {
+	  showSlide(currentSlide - 1);
+	}
+  
+	
+	const quizContainer = document.getElementById('quiz');
+	const resultsContainer = document.getElementById('results');
+	const submitButton = document.getElementById('submit');
+	const myQuestions = [
+	  
 		{
 			question: "What is the name of the currency that is used in the Fallout games?",
 			answers: {
@@ -19,7 +126,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 				d: 'Stealth, Precision, Empathy, Courage, Imagination, Ambivalence, Learning'
 			},	
 			correctAnswer: 'a'
-
+		},
 		{
 			question: 'What was the primary purpose of the vaults?',
 			answers: {
@@ -30,8 +137,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'a'
 			
-		}
-
+		},
 		{
 			question: 'What is the most robust type of armour that you can get in the Wastelands?',
 			answers: {
@@ -42,7 +148,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'b'
 			
-		}
+		},
 
 		{
 			question: 'What became a major power source in the Fallout Universe?',
@@ -54,7 +160,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'b'
 			
-		}
+		},
 
 		{
 			question: 'In Fallout 1, why was the vault dweller sent out into the Wasteland?',
@@ -66,7 +172,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'd'
 			
-		}
+		},
 
 		{
 			question: 'In what year did the bombs fall?',
@@ -78,7 +184,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'b'
 			
-		}
+		},
 
 		{
 			question: 'How long did the "Great War" last?',
@@ -90,7 +196,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'b'
 			
-		}
+		},
 
 		{
 			question: 'What caused the "Great War"?',
@@ -102,7 +208,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'b'
 			
-		}
+		},
 
 		{
 			question: 'What evil group is comprised of the remnants of pre-war United States government?',
@@ -114,7 +220,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'd'
 			
-		}
+		},
 
 		{
 		question: 'Who is responsible for creating the synths("Synthetic Humans") in Fallout 4?',
@@ -126,7 +232,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'b'
 			
-		}
+		},
 
 		{
 		question: 'Which faction is modeled after an ancient society?',
@@ -138,7 +244,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 			},
 			correctAnswer: 'd'
 			
-		}
+		},
 
 		{
 			question: 'Which Raider Group is known for their love of dynamite?',
@@ -150,7 +256,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 				},
 				correctAnswer: 'd'
 				
-		}
+		},
 
 		{
 				question: 'What is one of the primary goals of The Brotherhood of Steel?',
@@ -162,7 +268,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 					},
 					correctAnswer: 'b'
 					
-		}
+		},
 
 		{
 					question: 'What is the name of the giant communist-hating robot, controlled by the Brotherhood of Steel?',
@@ -174,7 +280,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 						},
 						correctAnswer: 'd'
 						
-		}
+		},
 
 		{
 			question: 'Which country was annexed by the US in the Fallout Universe?',
@@ -186,7 +292,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 				},
 				correctAnswer: 'a'
 				
-		}
+		},
 
 		{
 			question: 'Who were the founding members of The Brotherhood of Steel?',
@@ -198,7 +304,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 				},
 				correctAnswer: 'b'
 				
-		}
+		},
 
 		{
 			question: 'What year was the first Fallout Game released?',
@@ -210,7 +316,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 				},
 				correctAnswer: 'a'
 				
-		}
+		},
 
 		{
 			question: 'In 1969 the 50 states were split into how many Commonwealths?',
@@ -222,7 +328,7 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 				},
 				correctAnswer: 'b'
 				
-		}
+		},
 
 		{
 			question: 'What does V.A.T.S. stand for?',
@@ -238,16 +344,22 @@ function generateQuiz(questions, quizContainer, resultsContainer, submitButton){
 
 
 	];
-
-	function showResults(questions, quizContainer, resultsContainer){
-		// code will go here
-	}
-
-	// show the questions
-	showQuestions(questions, quizContainer);
-
-	// when user clicks submit, show results
-	submitButton.onclick = function(){
-		showResults(questions, quizContainer, resultsContainer);
-	}
-}
+  
+	
+	buildQuiz();
+  
+	
+	const previousButton = document.getElementById("previous");
+	const nextButton = document.getElementById("next");
+	const slides = document.querySelectorAll(".slide");
+	let currentSlide = 0;
+  
+	// Show the first slide
+	showSlide(currentSlide);
+  
+	
+	submitButton.addEventListener('click', showResults);
+	previousButton.addEventListener("click", showPreviousSlide);
+	nextButton.addEventListener("click", showNextSlide);
+  })();
+  
